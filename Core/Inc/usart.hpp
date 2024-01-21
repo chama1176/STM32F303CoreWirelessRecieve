@@ -24,15 +24,37 @@ namespace usart
 class UsartBuffer
 {
 private:
-	const int BUFFER_SIZE = 128;
-	char buffer_[BUFFER_SIZE];
-	int rp_;
-	int wp_;
+	static constexpr uint32_t BUFFER_SIZE = 128;	// 2
+	char buffer_[BUFFER_SIZE] = {};
+	uint32_t rp_;
+	uint32_t wp_;
 
 public:
-  inline UsartBuffer():
-  buffer({})
+  inline UsartBuffer()
+  : rp_(0)
+  , wp_(0)
   {
+  }
+  bool enqueue(char data){
+	  if(((wp_ - rp_) & (BUFFER_SIZE-1)) == (BUFFER_SIZE-1)){
+		  return false;
+	  }
+	  buffer_[wp_] = data;
+	  inc_wp();
+	  return true;
+  }
+  void inc_wp(){
+	  wp_ = (++wp_) & (BUFFER_SIZE-1);
+  }
+  void inc_rp(){
+	  rp_ = (++rp_) & (BUFFER_SIZE-1);
+  }
+  bool pop(char & data){
+	  if(rp_ == wp_){
+		  data = 0;
+	  }
+	  data = buffer_[rp_];
+	  inc_rp();
   }
 
 };
