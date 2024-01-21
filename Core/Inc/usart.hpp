@@ -18,14 +18,11 @@
 #ifndef __USART_H_
 #define __USART_H_
 
-namespace usart
-{
-
 class UsartBuffer
 {
 private:
 	static constexpr uint32_t BUFFER_SIZE = 128;	// 2
-	char buffer_[BUFFER_SIZE] = {};
+	unsigned char buffer_[BUFFER_SIZE] = {};
 	uint32_t rp_;
 	uint32_t wp_;
 
@@ -35,7 +32,7 @@ public:
   , wp_(0)
   {
   }
-  bool enqueue(char data){
+  bool enqueue(unsigned char data){
 	  if(((wp_ - rp_) & (BUFFER_SIZE-1)) == (BUFFER_SIZE-1)){
 		  return false;
 	  }
@@ -49,16 +46,17 @@ public:
   void inc_rp(){
 	  rp_ = (++rp_) & (BUFFER_SIZE-1);
   }
-  bool pop(char & data){
+  bool dequeue(unsigned char & data){
 	  if(rp_ == wp_){
-		  data = 0;
+		  return false;
 	  }
 	  data = buffer_[rp_];
 	  inc_rp();
+	  return true;
   }
 
 };
 
-}
+
 #endif /* __USART_H_ */
 
