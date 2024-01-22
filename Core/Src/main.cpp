@@ -103,10 +103,26 @@ int main(void)
   UsartBuffer ub;
   while (1)
   {
-	  ub.enqueue('9');
-	  unsigned char sd = ' ';
-	  ub.dequeue(sd);
-	  HAL_UART_Transmit(&huart1, &sd, 1, 10);
+	  for (int i = 0; i < 127; ++i){
+		  bool res = ub.enqueue('0'+(i%10));
+		  if(res){
+			  const uint8_t tx_fail[] = "Succeed\r\n";
+			  HAL_UART_Transmit(&huart1, tx_fail, sizeof(tx_fail), 10);
+		  }else{
+			  const uint8_t tx_fail[] = "Failed\r\n";
+			  HAL_UART_Transmit(&huart1, tx_fail, sizeof(tx_fail), 10);
+		  }
+	  }
+	  for(int i = 0; i < 127; ++i){
+		  unsigned char sd = ' ';
+		  bool res = ub.dequeue(sd);
+		  if(res){
+			  HAL_UART_Transmit(&huart1, &sd, 1, 10);
+		  }else{
+			  const uint8_t tx_fail[] = "Failedr\r\n";
+			  HAL_UART_Transmit(&huart1, tx_fail, sizeof(tx_fail), 10);
+		  }
+	  }
 
 	  if(HAL_GetTick() - last_processed_time > 500){
 		  HAL_UART_Transmit(&huart1, tx_data, sizeof(tx_data), 10);

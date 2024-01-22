@@ -3,10 +3,10 @@ usart.hpp:35:8:bool UsartBuffer::enqueue(unsigned char)	16	static
 usart.hpp:43:8:void UsartBuffer::inc_wp()	16	static
 usart.hpp:46:8:void UsartBuffer::inc_rp()	16	static
 usart.hpp:49:8:bool UsartBuffer::dequeue(unsigned char&)	16	static
-main.cpp:69:5:int main()	152	static
-main.cpp:127:6:void SystemClock_Config()	96	static
-main.cpp:170:13:void MX_USART1_UART_Init()	8	static
-main.cpp:205:13:void MX_USART2_UART_Init()	8	static
-main.cpp:240:13:void MX_GPIO_Init()	16	static
-main.cpp:252:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
-main.cpp:268:6:void Error_Handler()	4	static,ignoring_inline_asm
+main.cpp:69:5:int main()	200	static
+main.cpp:143:6:void SystemClock_Config()	96	static
+main.cpp:186:13:void MX_USART1_UART_Init()	8	static
+main.cpp:221:13:void MX_USART2_UART_Init()	8	static
+main.cpp:256:13:void MX_GPIO_Init()	16	static
+main.cpp:268:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
+main.cpp:284:6:void Error_Handler()	4	static,ignoring_inline_asm
