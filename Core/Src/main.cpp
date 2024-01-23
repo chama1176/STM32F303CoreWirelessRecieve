@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usart.hpp"
+#include "core_wireless_control_rx.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,8 +59,9 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-const uint8_t tx_data[] = "Hello, World\r\n";
-uint8_t byte;
+uint8_t rxed_byte_data;
+UsartBuffer ub;
+
 /* USER CODE END 0 */
 
 /**
@@ -98,35 +100,31 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  HAL_UART_Receive_IT(&huart1, &byte, 1);
+  CoreWirelessControlRx cwcr(&ub);
+  HAL_UART_Receive_IT(&huart1, &rxed_byte_data, 1);
   uint32_t  last_processed_time = HAL_GetTick();
-  UsartBuffer ub;
   while (1)
   {
-	  for (int i = 0; i < 127; ++i){
-		  bool res = ub.enqueue('0'+(i%10));
-		  if(res){
-			  const uint8_t tx_fail[] = "Succeed\r\n";
-			  HAL_UART_Transmit(&huart1, tx_fail, sizeof(tx_fail), 10);
-		  }else{
-			  const uint8_t tx_fail[] = "Failed\r\n";
-			  HAL_UART_Transmit(&huart1, tx_fail, sizeof(tx_fail), 10);
-		  }
-	  }
-	  for(int i = 0; i < 127; ++i){
-		  unsigned char sd = ' ';
-		  bool res = ub.dequeue(sd);
-		  if(res){
-			  HAL_UART_Transmit(&huart1, &sd, 1, 10);
-		  }else{
-			  const uint8_t tx_fail[] = "Failedr\r\n";
-			  HAL_UART_Transmit(&huart1, tx_fail, sizeof(tx_fail), 10);
-		  }
+	  if(cwcr.parse() == true){
+		  	  uint8_t a = cwcr.test();
+		  	  HAL_UART_Transmit(&huart2, &a, sizeof(a), 10);
+		  	  uint8_t t = '!';
+		  	  HAL_UART_Transmit(&huart2, &t, sizeof(t), 10);
 	  }
 
+
+//	  uint8_t data = ' ';
+//	  bool res = ub.dequeue(data);
+//	  if(res){
+//		  HAL_UART_Transmit(&huart2, &data, sizeof(data), 10);
+//	  }else{
+//		  const uint8_t tx_empty[] = "empty\r\n";
+//		  HAL_UART_Transmit(&huart2, tx_empty, sizeof(tx_empty), 10);
+//	  }
+
 	  if(HAL_GetTick() - last_processed_time > 500){
+		  const uint8_t tx_data[] = "00,0401,CD:01,90,7F,91,89,00,00,00\r\n";
 		  HAL_UART_Transmit(&huart1, tx_data, sizeof(tx_data), 10);
-		  HAL_UART_Transmit(&huart2, tx_data, sizeof(tx_data), 10);
 		  last_processed_time = HAL_GetTick();
 	  }
     /* USER CODE END WHILE */
@@ -263,16 +261,18 @@ static void MX_GPIO_Init(void)
 }
 
 
-const uint8_t tx_ddata[] = "\r\nR: ";
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart->Instance == USART1)
   {
-//    HAL_UART_Transmit(&huart2, &tx_ddata, sizeof(tx_ddata), 100);
-    HAL_UART_Transmit(&huart2, &byte, sizeof(byte), 100);
+	  bool res = ub.enqueue(rxed_byte_data);
+	  if(!res){
+		  const uint8_t tx_fail[] = "Failed to enqueue\r\n";
+		  HAL_UART_Transmit(&huart2, tx_fail, sizeof(tx_fail), 10);
+	  }
 
-    HAL_UART_Receive_IT(&huart1, &byte, 1);
+	  HAL_UART_Receive_IT(&huart1, &rxed_byte_data, 1);
   }
 }
 /* USER CODE END 4 */
