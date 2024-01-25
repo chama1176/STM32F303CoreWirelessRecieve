@@ -71,15 +71,15 @@ public:
 		for(int i = 0; i < 2; ++i){
 			uint8_t a1 = char2int(data[idx+29+i*3]);
 			uint8_t a2 = char2int(data[idx+30+i*3]);
-			buttons_[0+i] = (a1 & 0x1) >> 0;
-			buttons_[1+i] = (a1 & 0x2) >> 1;
-			buttons_[2+i] = (a1 & 0x4) >> 2;
-			buttons_[3+i] = (a1 & 0x8) >> 3;
+			buttons_[0+i*8] = (a1 & 0x1);
+			buttons_[1+i*8] = (a1 & 0x2) >> 1;
+			buttons_[2+i*8] = (a1 & 0x4) >> 2;
+			buttons_[3+i*8] = (a1 & 0x8) >> 3;
 
-			buttons_[4+i] = (a2 & 0x1) >> 0;
-			buttons_[5+i] = (a2 & 0x2) >> 1;
-			buttons_[6+i] = (a2 & 0x4) >> 2;
-			buttons_[7+i] = (a2 & 0x8) >> 3;
+			buttons_[4+i*8] = (a2 & 0x1);
+			buttons_[5+i*8] = (a2 & 0x2) >> 1;
+			buttons_[6+i*8] = (a2 & 0x4) >> 2;
+			buttons_[7+i*8] = (a2 & 0x8) >> 3;
 		}
 	    return true;
 	  } else{
@@ -99,7 +99,7 @@ public:
 	  return 0;
   }
   bool button(uint8_t i){
-	  if(i < 8) return buttons_[i];
+	  if(i < 16) return buttons_[i];
 	  return 0;
   }
 

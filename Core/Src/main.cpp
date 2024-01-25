@@ -122,8 +122,8 @@ int main(void)
 	  }
 
 	  if(HAL_GetTick() - last_processed_time > 500){
-		  const uint8_t tx_data[] = "00,0401,CD:01,90,7F,91,89,00,00,00\r\n";
-		  HAL_UART_Transmit(&huart1, tx_data, sizeof(tx_data), 10);
+//		  const uint8_t tx_data[] = "00,0401,CD:01,90,7F,91,89,00,00,00\r\n";
+//		  HAL_UART_Transmit(&huart1, tx_data, sizeof(tx_data), 10);
 		  last_processed_time = HAL_GetTick();
 	  }
     /* USER CODE END WHILE */

@@ -11,7 +11,7 @@ core_wireless_control_rx.hpp:50:8:bool CoreWirelessControlRx::parse()	88	static
 core_wireless_control_rx.hpp:97:11:int16_t CoreWirelessControlRx::axis(uint8_t)	16	static
 core_wireless_control_rx.hpp:101:8:bool CoreWirelessControlRx::button(uint8_t)	16	static
 main.cpp:66:6:void uart_putc(uint8_t)	24	static
-main.cpp:77:5:int main()	120	static
+main.cpp:77:5:int main()	80	static
 main.cpp:140:6:void SystemClock_Config()	96	static
 main.cpp:183:13:void MX_USART1_UART_Init()	8	static
 main.cpp:218:13:void MX_USART2_UART_Init()	8	static
