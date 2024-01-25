@@ -25,8 +25,21 @@ class CoreWirelessControlRx
 private:
 	UsartBuffer *usart_;
 	int16_t axis_[5] = {};
-	bool buttons_[8] = {};
+	bool buttons_[16] = {};
 	char test_;
+
+	// input char should be a-f,0-9,A-F
+	inline uint8_t char2int(char & c) {
+		int8_t ans = 0;
+		if('a' <= c && c <= 'f'){
+			ans = c - 'a' + 10;
+		} else if('A' <= c && c <= 'F'){
+			ans = c - 'A' + 10;
+		} else if('0' <= c && c <= '9'){
+			ans = c - '0';
+		}
+		return ans;
+	}
 
 public:
   CoreWirelessControlRx(UsartBuffer * usart)
@@ -50,7 +63,23 @@ public:
 		 return false;
 	  }
 	  if(data[idx] == '0' && data[idx+1] == '0' && data[idx+34] == '\r') {
-        test_ = 'k';
+
+		for(int i = 0; i < 5; ++i){
+			axis_[i] = (int8_t)((char2int(data[idx+14+i*3]) << 4) | char2int(data[idx+15+i*3]));
+		}
+		for(int i = 0; i < 2; ++i){
+			uint8_t a1 = char2int(data[idx+29+i*3]);
+			uint8_t a2 = char2int(data[idx+30+i*3]);
+			buttons_[0+i] = (a1 & 0x1) >> 0;
+			buttons_[1+i] = (a1 & 0x2) >> 1;
+			buttons_[2+i] = (a1 & 0x4) >> 2;
+			buttons_[3+i] = (a1 & 0x8) >> 3;
+
+			buttons_[4+i] = (a2 & 0x1) >> 0;
+			buttons_[5+i] = (a2 & 0x2) >> 1;
+			buttons_[6+i] = (a2 & 0x4) >> 2;
+			buttons_[7+i] = (a2 & 0x8) >> 3;
+		}
 	    return true;
 	  } else{
 		++idx;
@@ -63,6 +92,14 @@ public:
 	  char tmp = test_;
 	  test_ = '\r';
 	  return tmp;
+  }
+  int16_t axis(uint8_t i){
+	  if(i < 5) return axis_[i];
+	  return 0;
+  }
+  bool button(uint8_t i){
+	  if(i < 8) return buttons_[i];
+	  return 0;
   }
 
 };
