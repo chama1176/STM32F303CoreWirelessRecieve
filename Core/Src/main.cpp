@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "usart.hpp"
 #include "core_wireless_control_rx.hpp"
+#include "xprintf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,6 +63,11 @@ static void MX_USART1_UART_Init(void);
 uint8_t rxed_byte_data;
 UsartBuffer ub;
 
+void uart_putc(uint8_t c){
+	char buf[1];
+	buf[0] = c;
+    HAL_UART_Transmit(&huart2, (uint8_t *)buf, sizeof(buf), 0xFFFF);
+}
 /* USER CODE END 0 */
 
 /**
@@ -95,21 +101,24 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  xdev_out(uart_putc);
   CoreWirelessControlRx cwcr(&ub);
   HAL_UART_Receive_IT(&huart1, &rxed_byte_data, 1);
   uint32_t  last_processed_time = HAL_GetTick();
   while (1)
   {
 	  if(cwcr.parse() == true){
-		  	  uint8_t a = cwcr.test();
-		  	  HAL_UART_Transmit(&huart2, &a, sizeof(a), 10);
-		  	  uint8_t t = '!';
-		  	  HAL_UART_Transmit(&huart2, &t, sizeof(t), 10);
+		  const uint8_t tx_fail[] = "!--\r\n";
+		  HAL_UART_Transmit(&huart2, tx_fail, sizeof(tx_fail), 10);
+		  xprintf("%d, %d, %d, %d, %d\r\n", cwcr.axis(0), cwcr.axis(1), cwcr.axis(2), cwcr.axis(3), cwcr.axis(4));
+		  xprintf("%d, %d, %d, %d\r\n", cwcr.button(0), cwcr.button(1), cwcr.button(2), cwcr.button(3));
+		  xprintf("%d, %d, %d, %d\r\n", cwcr.button(4), cwcr.button(5), cwcr.button(6), cwcr.button(7));
+		  xprintf("%d, %d, %d, %d\r\n", cwcr.button(8), cwcr.button(9), cwcr.button(10), cwcr.button(11));
+		  xprintf("%d, %d, %d, %d\r\n", cwcr.button(12), cwcr.button(13), cwcr.button(14), cwcr.button(15));
 	  }
 
 	  if(HAL_GetTick() - last_processed_time > 500){

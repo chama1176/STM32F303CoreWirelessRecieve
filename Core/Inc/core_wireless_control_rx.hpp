@@ -28,6 +28,7 @@ private:
 	bool buttons_[16] = {};
 	char test_;
 
+	// original func for minimum flash size
 	// input char should be a-f,0-9,A-F
 	inline uint8_t char2int(char & c) {
 		int8_t ans = 0;

@@ -77,7 +77,7 @@ main-build: STM32F303CoreWirelessRecieve.elf secondary-outputs
 
 # Tool invocations
 STM32F303CoreWirelessRecieve.elf: $(OBJS) $(USER_OBJS) D:\Documents\STM32_WS\STM32F303CoreWirelessRecieve\STM32F303K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "STM32F303CoreWirelessRecieve.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Documents\STM32_WS\STM32F303CoreWirelessRecieve\STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F303CoreWirelessRecieve.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+	arm-none-eabi-g++ -o "STM32F303CoreWirelessRecieve.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Documents\STM32_WS\STM32F303CoreWirelessRecieve\STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F303CoreWirelessRecieve.map" -Wl,--gc-sections -static  -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
